@@ -8,10 +8,15 @@ from __future__ import (
 
 from six.moves import tkinter as Tk
 
+from zope.interface import implementer
+from helpers.observer import IObserver
+
 from view.window import PhotoWindow
+from view.widgets import ListboxObservable
+
 from model.thumbcache import THMBC_DBS, Thumbcache
 
-
+@implementer(IObserver)
 class ThumbcacheFrame(Tk.Frame, object) :
     def __init__(self, master=None) :
         super(ThumbcacheFrame, self).__init__(master)
@@ -29,9 +34,10 @@ class ThumbcacheFrame(Tk.Frame, object) :
         ).pack(fill=Tk.X)
         
         # Listbox
-        self.thumblist = Tk.Listbox(self, height=25, width=40)
+        self.thumblist = ListboxObservable(self, height=25, width=40)
         self.thumblist.pack(side=Tk.LEFT)
-        self.thumblist.bind('<ButtonRelease-1>', self.showImage)
+        #self.thumblist.bind('<ButtonRelease-1>', self.showImage)
+        self.thumblist.add_observer(self)
 
         # preview
         self.thumbimage = None
@@ -55,20 +61,21 @@ class ThumbcacheFrame(Tk.Frame, object) :
                                      command=self.populate)
         self.ckZero.pack(anchor=Tk.W)
 
+    def update(self, *args, **kwargs) :
+        try :
+            index, value = args
+            image = self.cache.getImage(index=int(value.split()[0]))
+            title = value.split()[2]
+            self.showImage(image, title)
+        except Exception as e :
+            print(e)
 
-    def showImage(self, event=None) :
-        image = None
-        title = '<Inconnu>'
+    def showImage(self, image=None, title='<Inconnu>') :
         if not self.thumbimage :
             self.thumbimage = PhotoWindow(self, title, closeFunc=self.closeView)
 
-        selection = self.thumblist.curselection()
-        if selection :
-            current = self.thumblist.get(selection[0])
-            image = self.cache.getImage(index=int(current.split()[0]))
-            title = current.split()[2]
-
         self.thumbimage.updatePhoto(image, title)
+        
 
     def closeView(self, widget) :
         self.thumbimage = None
@@ -85,3 +92,7 @@ class ThumbcacheFrame(Tk.Frame, object) :
             if not self.zero.get() and entry.dataSize == 0 :
                 continue
             self.thumblist.insert(Tk.END, listEntry)
+
+if __name__ == "__main__" :
+    app = ThumbcacheFrame()
+    app.mainloop()

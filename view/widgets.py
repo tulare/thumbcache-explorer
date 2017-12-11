@@ -9,9 +9,28 @@ from __future__ import (
 from six.moves import tkinter as Tk
 from six.moves.urllib.request import urlopen
 
-import sys
 from io import BytesIO
 from PIL import Image, ImageTk
+
+from zope.interface import implementer
+from helpers.observer import Observable
+
+
+class ListboxObservable(Tk.Listbox, Observable):
+
+    def __init__(self, master=None, *args, **kwargs) :
+        super(ListboxObservable, self).__init__(master, *args, **kwargs)
+        Observable.__init__(self)
+        self.bind('<<ListboxSelect>>', self.onselect)
+
+    def onselect(self, event) :
+        widget = event.widget
+        selection = widget.curselection()
+        if selection :
+            index = int(selection[0])
+            value = widget.get(index)
+            self.notify(index, value, widget=widget)
+
 
 def loadPhotoImage(url) :
     try :
@@ -21,6 +40,7 @@ def loadPhotoImage(url) :
     except Exception as e :
         photo = None
     return photo
+
 
 class WebImage(Tk.Label, object) :
     def __init__(self, master=None, url=None, photo=None, **config) :
@@ -52,26 +72,3 @@ class WebImage(Tk.Label, object) :
     def getPhoto(self) :
         return self.photo
 
-if __name__ == '__main__' :
-    root = Tk.Tk()
-
-    demo_url1 = 'https://dummyimage.com/320x270/999/fff'
-    demo_url2 = 'https://dummyimage.com/320x270/fff/999'
-    photo1 = None
-    photo2 = loadPhotoImage(demo_url2)
-
-    def echangePhotos(event=None) :
-        global photo1, photo2
-        photo1 = img.getPhoto()
-        photo1, photo2 = photo2, photo1
-        img.setPhoto(photo1)
-        
-    Tk.Button(root, text='Quitter', command=root.destroy).pack(fill=Tk.X)
-    Tk.Button(root, text='Changer', command=echangePhotos).pack(fill=Tk.X)
-    img = WebImage(root, url=demo_url1)
-    img.pack(side=Tk.LEFT, fill=Tk.X)
-    img2 = WebImage(root, photo=photo2)
-    img2.pack(fill=Tk.X)
-
-    root.mainloop()
-    

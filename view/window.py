@@ -7,10 +7,7 @@ from __future__ import (
     )
 
 from six.moves import tkinter as Tk
-
-import sys
-from view.webimage import WebImage
-
+from view.widgets import WebImage
 
 class PhotoWindow(Tk.Toplevel, object) :
     def __init__(self, master=None, title='PhotoWindow', closeFunc=None) :
