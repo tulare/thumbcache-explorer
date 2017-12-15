@@ -13,23 +13,31 @@ from io import BytesIO
 from PIL import Image, ImageTk
 
 from zope.interface import implementer
-from helpers.observer import Observable
+from helpers.observer import Observable, IObserver
 
-
-class ListboxObservable(Tk.Listbox, Observable):
+@implementer(IObserver)
+class ThumbsListbox(Tk.Listbox, Observable):
 
     def __init__(self, master=None, *args, **kwargs) :
-        super(ListboxObservable, self).__init__(master, *args, **kwargs)
+        super(ThumbsListbox, self).__init__(master, *args, **kwargs)
         Observable.__init__(self)
-        self.bind('<<ListboxSelect>>', self.onselect)
+        self.bind('<<ListboxSelect>>', self.select_action)
 
-    def onselect(self, event) :
+    def select_action(self, event) :
+        """Event triggered when listbox selection change"""
         widget = event.widget
         selection = widget.curselection()
         if selection :
             index = int(selection[0])
-            value = widget.get(index)
-            self.notify(index, value, widget=widget)
+            values = dict(zip(('index', 'title', 'size'), widget.get(index)))
+            self.notify('detail', **values)
+
+    def observer_action(self, *args, **kwargs) :
+        """Populates the listbox with entries"""
+        if 'populate' in args :
+            self.delete(0, Tk.END)
+            for entry in kwargs['entries'] :
+                self.insert(Tk.END, entry)
 
 
 def loadPhotoImage(url) :
@@ -47,9 +55,9 @@ class WebImage(Tk.Label, object) :
         super(WebImage, self).__init__(master, config)
         self.url = url
         self.photo = photo
-        self.update()
+        self.refresh()
 
-    def update(self) :
+    def refresh(self) :
         """ Mise à jour du Label : la photo est prioritaire sur l'url """
         if isinstance(self.photo, ImageTk.PhotoImage) :
             self.url = None
@@ -60,14 +68,14 @@ class WebImage(Tk.Label, object) :
     def setUrl(self, url) :
         self.url = url
         self.photo = None
-        self.update()
+        self.refresh()
 
     def setPhoto(self, photo) :
         if isinstance(photo, ImageTk.PhotoImage) :
             self.photo = photo
         else :
             self.photo = ImageTk.PhotoImage(photo)
-        self.update()
+        self.refresh()
 
     def getPhoto(self) :
         return self.photo

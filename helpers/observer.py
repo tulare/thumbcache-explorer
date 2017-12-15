@@ -3,7 +3,7 @@
 from zope.interface import Interface, Attribute, implementer
 
 class IObserver(Interface) :
-    def update(*args, **kwargs) :
+    def observer_action(*args, **kwargs) :
         """Method called when observable notify change"""
 
 
@@ -42,5 +42,5 @@ class Observable(object) :
         
     def notify(self, *args, **kwargs) :
         for observer in self.observers :
-            observer.update(*args, **kwargs)
+            observer.observer_action(*args, **kwargs)
 

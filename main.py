@@ -1,6 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-from view.thumbview import ThumbcacheFrame
+from model import Model
+from view import View
+from controller import Controller
 
-app = ThumbcacheFrame()
-app.mainloop()
+model = Model()
+view = View()
+controller = Controller(model, view)
+controller.run()
+
