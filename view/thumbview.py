@@ -7,15 +7,13 @@ from __future__ import (
     )
 
 from six.moves import tkinter as Tk
-
-from view.widgets import ThumbsListbox
+from view.widgets import ThumbsListbox, ThumbsListboxMulti
 from model import THMBC_DBS
 
 
 class ThumbcacheFrame(Tk.Frame, object) :
     def __init__(self, master=None, *args, **kwargs) :
         super(ThumbcacheFrame, self).__init__(master, *args, **kwargs)
-        self.pack(fill=Tk.BOTH, expand=1)
         self.createWidgets()
         self.populate()
 
@@ -24,11 +22,27 @@ class ThumbcacheFrame(Tk.Frame, object) :
         Tk.Button(self,
             text='Regénération cache',
             command=self.populate
-        ).pack(side=Tk.TOP, fill=Tk.X)
+        ).pack(
+            side=Tk.TOP,
+            fill=Tk.X
+        )
         
-        # Listbox
-        self.thumblist = ThumbsListbox(self, height=25, width=35)
-        self.thumblist.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
+        # Listbox for thumbcache entries
+        #self.thumblist = ThumbsListbox(self, height=25, width=35)
+        self.thumblist = ThumbsListboxMulti(
+            self,
+            headings=(
+                ('index', { 'width' : 60, 'anchor' : Tk.E }),
+                ('hash', { 'width' : 200, 'anchor' : Tk.CENTER }),
+                ('size', { 'width' : 100, 'anchor' : Tk.CENTER })
+            ),
+            style='ThumbList.Treeview',
+            height=25
+        )
+        self.thumblist.pack(
+            side=Tk.LEFT,
+            fill=Tk.Y
+        )
 
         # radiobuttons
         self.cachefile = Tk.StringVar()
@@ -39,7 +53,9 @@ class ThumbcacheFrame(Tk.Frame, object) :
                 variable=self.cachefile,
                 value=cachefile,
                 command=self.populate
-            ).pack(anchor=Tk.W)
+            ).pack(
+                anchor=Tk.W
+            )
         self.cachefile.set(THMBC_DBS['256x256'])
 
         # checkbox empty
@@ -49,14 +65,15 @@ class ThumbcacheFrame(Tk.Frame, object) :
             text='Images vides',
             variable=self.empty,
             command=self.populate
-        ).pack(anchor=Tk.W)
+        ).pack(
+            anchor=Tk.W
+        )
         
     def populate(self) :
-        self.update()
         self.event_generate('<<Populate>>', when='tail')
         
 
 if __name__ == "__main__" :
     app = ThumbcacheFrame()
-    app.pack()
+    app.pack(fill=Tk.BOTH, expand=1)
     app.mainloop()

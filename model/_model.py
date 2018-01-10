@@ -20,7 +20,7 @@ class Model(Observable) :
             # filter empty ?
             if not empty and entry.dataSize == 0 :
                 continue
-            elem = (indice, hex(entry.entryHash), entry.dataSize)
+            elem = (indice, '{:016x}'.format(entry.entryHash), entry.dataSize)
             self.entries.append(elem)
         self.sync()
 

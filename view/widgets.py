@@ -7,6 +7,8 @@ from __future__ import (
     )
 
 from six.moves import tkinter as Tk
+from six.moves import tkinter_ttk as ttk
+from six.moves import tkinter_font as tkFont
 from six.moves.urllib.request import urlopen
 
 from io import BytesIO
@@ -16,7 +18,7 @@ from zope.interface import implementer
 from helpers.observer import Observable, IObserver
 
 @implementer(IObserver)
-class ThumbsListbox(Tk.Listbox, Observable):
+class ThumbsListbox(Tk.Listbox, Observable) :
 
     def __init__(self, master=None, *args, **kwargs) :
         super(ThumbsListbox, self).__init__(master, *args, **kwargs)
@@ -38,6 +40,51 @@ class ThumbsListbox(Tk.Listbox, Observable):
             self.delete(0, Tk.END)
             for entry in kwargs['entries'] :
                 self.insert(Tk.END, entry)
+
+@implementer(IObserver)
+class ThumbsListboxMulti(ttk.Treeview, Observable) :
+
+    def __init__(self, master=None, headings=None, *args, **kwargs) :
+        super(ThumbsListboxMulti, self).__init__(master, *args, **kwargs)
+        Observable.__init__(self)
+        self.bind('<<TreeviewSelect>>', self.select_action)
+
+        # configure columns and select mode
+        self.headings = headings
+        self.config(
+            selectmode='browse',
+            columns=list(heading[0] for heading in self.headings),
+            show='headings'
+        )
+        self.create_headings()
+            
+    def create_headings(self) :
+        """Reset columns headings to default"""
+        for colno, heading in enumerate(self.headings) :
+            self.heading(colno, text=heading[0].title())
+            self.column(colno, **heading[1])
+        
+
+    def select_action(self, event) :
+        """Event triggered when listbox selection change"""
+        widget = event.widget
+        selection = widget.selection()
+        if selection :
+            item = widget.item(selection[0])
+            self.notify('detail', values=item['values'])
+
+    def observer_action(self, *args, **kwargs) :
+        """Populates the listbox with entries"""
+        if 'populate' in args :
+            # discard previous content
+            self.delete(*self.get_children())
+
+            # restore headings defaults
+            self.create_headings()
+
+            # append entries
+            for entry in kwargs['entries'] :
+                self.insert('', Tk.END, values=entry)
 
 
 def loadPhotoImage(url) :
