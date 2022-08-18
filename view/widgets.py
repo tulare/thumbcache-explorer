@@ -9,7 +9,7 @@ from __future__ import (
 from six.moves import tkinter as Tk
 from six.moves import tkinter_ttk as ttk
 from six.moves import tkinter_font as tkFont
-from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request, urlopen
 
 from io import BytesIO
 from PIL import Image, ImageTk
@@ -88,11 +88,18 @@ class ThumbsListboxMulti(ttk.Treeview, Observable) :
 
 
 def loadPhotoImage(url) :
+    req = Request(
+        url,
+        headers={
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+        }
+    )
     try :
-        img_bytes = urlopen(url).read()
+        img_bytes = urlopen(req).read()
         img_buffer = Image.open(BytesIO(img_bytes))
         photo = ImageTk.PhotoImage(img_buffer)
     except Exception as e :
+        print(e)
         photo = None
     return photo
 
