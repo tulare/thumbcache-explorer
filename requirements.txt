@@ -1,4 +1,5 @@
--i https://pypi.org/simple
-pillow==9.4.0
-six==1.16.0
-zope.interface==5.5.2
+-i https://pypi.org/simple
+pillow==9.4.0
+setuptools==67.3.2; python_version >= '3.7'
+six==1.16.0
+zope.interface==5.5.2
