@@ -9,4 +9,4 @@ six = "*"
 pillow = "*"
 
 [dev-packages]
-pyreadline = "*"
+pyreadline3 = "*"
