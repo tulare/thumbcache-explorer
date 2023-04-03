@@ -23,7 +23,7 @@ class Controller(object) :
 
     def observer_action(self, *args, **kwargs) :
         if 'detail' in args :
-            index, title, size = kwargs['values']
+            index, offset, title, size = kwargs['values']
             title = '{} - {}'.format(index, title)
             image = self.model.getImage(index)
             self.view.showImage(image, title)

@@ -31,7 +31,7 @@ class ThumbsListbox(Tk.Listbox, Observable) :
         selection = widget.curselection()
         if selection :
             index = int(selection[0])
-            values = dict(zip(('index', 'title', 'size'), widget.get(index)))
+            values = dict(zip(('index', 'offset', 'title', 'size'), widget.get(index)))
             self.notify('detail', **values)
 
     def observer_action(self, *args, **kwargs) :

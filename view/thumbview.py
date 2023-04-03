@@ -8,7 +8,7 @@ from __future__ import (
 
 from six.moves import tkinter as Tk
 from view.widgets import ThumbsListbox, ThumbsListboxMulti
-from model import THMBC_DBS
+from model import TC_DBS, TC_DBS_DEFAULT
 
 
 class ThumbcacheFrame(Tk.Frame, object) :
@@ -33,6 +33,7 @@ class ThumbcacheFrame(Tk.Frame, object) :
             self,
             headings=(
                 ('index', { 'width' : 60, 'anchor' : Tk.E }),
+                ('offset', { 'width' : 100, 'anchor' : Tk.CENTER }),
                 ('hash', { 'width' : 200, 'anchor' : Tk.CENTER }),
                 ('size', { 'width' : 100, 'anchor' : Tk.CENTER })
             ),
@@ -46,7 +47,7 @@ class ThumbcacheFrame(Tk.Frame, object) :
 
         # radiobuttons
         self.cachefile = Tk.StringVar()
-        for label, cachefile in THMBC_DBS.items() :
+        for label, cachefile in TC_DBS.items() :
             Tk.Radiobutton(
                 self,
                 text=label,
@@ -56,7 +57,7 @@ class ThumbcacheFrame(Tk.Frame, object) :
             ).pack(
                 anchor=Tk.W
             )
-        self.cachefile.set(THMBC_DBS['256x256'])
+        self.cachefile.set(TC_DBS_DEFAULT)
 
         # checkbox empty
         self.empty = Tk.BooleanVar()

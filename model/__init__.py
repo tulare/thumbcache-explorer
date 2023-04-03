@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-__all__ = [ 'Model', 'THMBC_DBS' ]
+__all__ = [ 'Model', 'TC_DBS', 'TC_DBS_DEFAULT' ]
 
-from model._model import Model, THMBC_DBS
+from model.const import *
+from model._model import *

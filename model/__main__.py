@@ -20,6 +20,6 @@ if __name__ == '__main__' :
     print('--------------------------------------------------------')
     model.build()
     print('--------------------------------------------------------')
-    model.build(cachefile=THMBC_DBS['32x32'])
+    model.build(cachefile=TC_DBS['32x32'])
     
 
