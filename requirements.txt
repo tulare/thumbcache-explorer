@@ -1,5 +1,0 @@
--i https://pypi.org/simple
-pillow==10.2.0
-setuptools==69.0.3 ; python_version >= '3.8'
-six==1.16.0
-zope.interface==6.1
