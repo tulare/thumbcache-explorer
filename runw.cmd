@@ -1,4 +1,4 @@
 @SETLOCAL
 @SET PIPENV_VENV_IN_PROJECT=1
-@.venv\Scripts\python.exe -B %*
+@START .venv\Scripts\pythonw.exe -B %*
 @ENDLOCAL
