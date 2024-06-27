@@ -1,5 +1,7 @@
 # project files
 pipenv*.cmd
+pypi*.cmd
+run*.cmd
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
